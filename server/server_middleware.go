@@ -6,6 +6,7 @@ import (
 	"net/http/httputil"
 )
 
+// 打印请求中间件
 func printRequest(c *gin.Context) {
 
 	r, err := httputil.DumpRequest(c.Request, true)

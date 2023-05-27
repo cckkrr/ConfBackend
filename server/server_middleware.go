@@ -1,6 +1,7 @@
 package server
 
 import (
+	com "ConfBackend/common"
 	"github.com/gin-gonic/gin"
 	"net/http/httputil"
 )
@@ -22,5 +23,17 @@ func cors() gin.HandlerFunc {
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 		//c.Next()
+	}
+}
+
+func MustHasUserUUID() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		uuid := c.GetHeader("X-User-UUID")
+		if uuid == "" {
+			com.Error(c, "HTTP请求头中缺少X-User-UUID")
+			c.Abort()
+			return
+		}
+		c.Set("uuid", uuid)
 	}
 }

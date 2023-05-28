@@ -1,6 +1,7 @@
 package server
 
 import (
+	"ConfBackend/chat"
 	com "ConfBackend/common"
 	S "ConfBackend/services"
 	"ConfBackend/view"
@@ -43,10 +44,11 @@ func StartApi() {
 	}
 
 	{
-		// instant messaging chat common api
-		chat := s.Group("/chat")
-		chat.Use(MustHasUserUUID())
-		chat.POST("/sendmsg", view.SendMsg)
+		// instant messaging im common api
+		im := s.Group("/im")
+		im.Use(MustHasUserUUID())
+		im.POST("/sendmsg", view.SendMsg)
+		im.POST("/receivews", chat.WsConnectionManager.WebSocketHandler)
 	}
 
 	{

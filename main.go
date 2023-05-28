@@ -1,6 +1,7 @@
 package main
 
 import (
+	"ConfBackend/chat"
 	"ConfBackend/server"
 	S "ConfBackend/services"
 )
@@ -14,6 +15,9 @@ func main() {
 
 	// 单独的协程监听车的socket端口
 	go server.StartListenHeroPort()
+
+	// 启动聊天部分功能
+	go chat.InitChatServices()
 
 	// 协程，启动所有其他的定时/周期或其它线程任务
 	go server.StartTimed()

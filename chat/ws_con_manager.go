@@ -1,6 +1,8 @@
 package chat
 
 import (
+	"ConfBackend/model"
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -9,8 +11,8 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-// User represents a connected user.
-type User struct {
+// _User represents a connected user.
+type _User struct {
 	UUID     string
 	Conn     *websocket.Conn
 	Messages chan string
@@ -18,9 +20,9 @@ type User struct {
 
 // ConnectionManager handles WebSocket connections.
 type ConnectionManager struct {
-	Users      map[string]*User
-	Register   chan *User
-	Unregister chan *User
+	Users      map[string]*_User
+	Register   chan *_User
+	Unregister chan *_User
 }
 
 var upgrader = websocket.Upgrader{
@@ -29,52 +31,32 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-/*// ServeHTTP handles the HTTP requests and upgrades the connection to WebSocket.
-func (c *ConnectionManager) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println("Failed to upgrade connection:", err)
-		return
-	}
-
-	uuid := r.PostFormValue("uuid")
-	if uuid == "" {
-		log.Println("No UUID provided.")
-		conn.Close()
-		return
-	}
-
-	user := &User{
-		UUID:     uuid,
-		Conn:     conn,
-		Messages: make(chan string),
-	}
-
-	c.Register <- user
-
-	// Start goroutine to listen for incoming messages from the user's WebSocket connection
-	go c.handleIncomingMessages(user)
-
-	// Start goroutine to send messages to the user's WebSocket connection
-	go c.handleOutgoingMessages(user)
-}*/
-
 // WebSocketHandler is the handler function for the WebSocket route.
 func (c *ConnectionManager) WebSocketHandler(ctx *gin.Context) {
+	log.Println("incoming ws connection")
 	conn, err := upgrader.Upgrade(ctx.Writer, ctx.Request, nil)
 	if err != nil {
 		log.Println("Failed to upgrade connection:", err)
 		return
 	}
 
-	uuid := ctx.PostForm("uuid")
-	if uuid == "" {
+	uuidobj, found := ctx.Get("uuid")
+	uuid := ""
+	if !found {
+		log.Println("No UUID provided.")
+
+	} else {
+		uuid = uuidobj.(string)
+	}
+	// todo check uuid validity
+
+	/*	if uuid == "" {
 		log.Println("No UUID provided.")
 		conn.Close()
 		return
-	}
+	}*/
 
-	user := &User{
+	user := &_User{
 		UUID:     uuid,
 		Conn:     conn,
 		Messages: make(chan string),
@@ -90,7 +72,7 @@ func (c *ConnectionManager) WebSocketHandler(ctx *gin.Context) {
 }
 
 // handleIncomingMessages listens for incoming messages from a user's WebSocket connection.
-func (c *ConnectionManager) handleIncomingMessages(user *User) {
+func (c *ConnectionManager) handleIncomingMessages(user *_User) {
 	defer func() {
 		c.Unregister <- user
 		user.Conn.Close()
@@ -108,7 +90,7 @@ func (c *ConnectionManager) handleIncomingMessages(user *User) {
 }
 
 // handleOutgoingMessages sends messages to a user's WebSocket connection.
-func (c *ConnectionManager) handleOutgoingMessages(user *User) {
+func (c *ConnectionManager) handleOutgoingMessages(user *_User) {
 	for message := range user.Messages {
 		err := user.Conn.WriteMessage(websocket.TextMessage, []byte(message))
 		if err != nil {
@@ -121,12 +103,13 @@ var WsConnectionManager *ConnectionManager
 
 func InitChatServices() {
 	WsConnectionManager = &ConnectionManager{
-		Users:      make(map[string]*User),
-		Register:   make(chan *User),
-		Unregister: make(chan *User),
+		Users:      make(map[string]*_User),
+		Register:   make(chan *_User),
+		Unregister: make(chan *_User),
 	}
 
-	go WsConnectionManager.StartUserManagement()
+	go WsConnectionManager.startUserManagement()
+	log.Println("Chat services initiated")
 
 	// todo 需要在外面转发至此
 	//http.Handle("/ws", WsConnectionManager)
@@ -136,19 +119,19 @@ func InitChatServices() {
 	//}
 }
 
-// StartUserManagement starts the user management goroutine.
-func (c *ConnectionManager) StartUserManagement() {
+// startUserManagement starts the user management goroutine.
+func (c *ConnectionManager) startUserManagement() {
 
 	for {
 		select {
 		case user := <-c.Register:
 			c.Users[user.UUID] = user
-			log.Printf("User %s connected.\n", user.UUID)
+			log.Printf("_User %s connected.\n", user.UUID)
 
 		case user := <-c.Unregister:
 			delete(c.Users, user.UUID)
 			close(user.Messages)
-			log.Printf("User %s disconnected.\n", user.UUID)
+			log.Printf("_User %s disconnected.\n", user.UUID)
 
 		}
 	}
@@ -157,4 +140,23 @@ func (c *ConnectionManager) StartUserManagement() {
 func IsUserOnline(uuid string) bool {
 	_, ok := WsConnectionManager.Users[uuid]
 	return ok
+}
+
+func GetAllOnlineUsers() []string {
+	var users []string
+	for k := range WsConnectionManager.Users {
+		users = append(users, k)
+	}
+	return users
+}
+
+func SendOnlineMsg(msg model.ImMessage) error {
+	if !IsUserOnline(msg.ToEntityUUID) {
+		return fmt.Errorf("user %s is not online", msg.ToEntityUUID)
+	}
+	//put in that user's message queue
+	msgStr, _ := json.Marshal(msg)
+	WsConnectionManager.Users[msg.ToEntityUUID].Messages <- string(msgStr)
+	return nil
+
 }

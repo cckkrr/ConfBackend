@@ -64,9 +64,24 @@ func (obj *_MemberMgr) WithUUID(uuid string) Option {
 	return optionFunc(func(o *options) { o.query["uuid"] = uuid })
 }
 
-// WithNickname nickName获取
+// WithNickname nickname获取
 func (obj *_MemberMgr) WithNickname(nickname string) Option {
-	return optionFunc(func(o *options) { o.query["nickName"] = nickname })
+	return optionFunc(func(o *options) { o.query["nickname"] = nickname })
+}
+
+// WithCreatedAt created_at获取
+func (obj *_MemberMgr) WithCreatedAt(createdAt string) Option {
+	return optionFunc(func(o *options) { o.query["created_at"] = createdAt })
+}
+
+// WithLoginID login_id获取
+func (obj *_MemberMgr) WithLoginID(loginID string) Option {
+	return optionFunc(func(o *options) { o.query["login_id"] = loginID })
+}
+
+// WithPassword password获取
+func (obj *_MemberMgr) WithPassword(password string) Option {
+	return optionFunc(func(o *options) { o.query["password"] = password })
 }
 
 // GetByOption 功能选项模式获取
@@ -150,16 +165,58 @@ func (obj *_MemberMgr) GetBatchFromUUID(uuids []string) (results []*Member, err 
 	return
 }
 
-// GetFromNickname 通过nickName获取内容
+// GetFromNickname 通过nickname获取内容
 func (obj *_MemberMgr) GetFromNickname(nickname string) (results []*Member, err error) {
-	err = obj.DB.WithContext(obj.ctx).Model(Member{}).Where("`nickName` = ?", nickname).Find(&results).Error
+	err = obj.DB.WithContext(obj.ctx).Model(Member{}).Where("`nickname` = ?", nickname).Find(&results).Error
 
 	return
 }
 
 // GetBatchFromNickname 批量查找
 func (obj *_MemberMgr) GetBatchFromNickname(nicknames []string) (results []*Member, err error) {
-	err = obj.DB.WithContext(obj.ctx).Model(Member{}).Where("`nickName` IN (?)", nicknames).Find(&results).Error
+	err = obj.DB.WithContext(obj.ctx).Model(Member{}).Where("`nickname` IN (?)", nicknames).Find(&results).Error
+
+	return
+}
+
+// GetFromCreatedAt 通过created_at获取内容
+func (obj *_MemberMgr) GetFromCreatedAt(createdAt string) (results []*Member, err error) {
+	err = obj.DB.WithContext(obj.ctx).Model(Member{}).Where("`created_at` = ?", createdAt).Find(&results).Error
+
+	return
+}
+
+// GetBatchFromCreatedAt 批量查找
+func (obj *_MemberMgr) GetBatchFromCreatedAt(createdAts []string) (results []*Member, err error) {
+	err = obj.DB.WithContext(obj.ctx).Model(Member{}).Where("`created_at` IN (?)", createdAts).Find(&results).Error
+
+	return
+}
+
+// GetFromLoginID 通过login_id获取内容
+func (obj *_MemberMgr) GetFromLoginID(loginID string) (results []*Member, err error) {
+	err = obj.DB.WithContext(obj.ctx).Model(Member{}).Where("`login_id` = ?", loginID).Find(&results).Error
+
+	return
+}
+
+// GetBatchFromLoginID 批量查找
+func (obj *_MemberMgr) GetBatchFromLoginID(loginIDs []string) (results []*Member, err error) {
+	err = obj.DB.WithContext(obj.ctx).Model(Member{}).Where("`login_id` IN (?)", loginIDs).Find(&results).Error
+
+	return
+}
+
+// GetFromPassword 通过password获取内容
+func (obj *_MemberMgr) GetFromPassword(password string) (results []*Member, err error) {
+	err = obj.DB.WithContext(obj.ctx).Model(Member{}).Where("`password` = ?", password).Find(&results).Error
+
+	return
+}
+
+// GetBatchFromPassword 批量查找
+func (obj *_MemberMgr) GetBatchFromPassword(passwords []string) (results []*Member, err error) {
+	err = obj.DB.WithContext(obj.ctx).Model(Member{}).Where("`password` IN (?)", passwords).Find(&results).Error
 
 	return
 }

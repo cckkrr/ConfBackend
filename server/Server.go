@@ -48,12 +48,14 @@ func StartApi() {
 		im := s.Group("/im")
 		im.Use(MustHasUserUUID())
 		im.POST("/sendmsg", view.SendMsg)
-		im.POST("/receivews", chat.WsConnectionManager.WebSocketHandler)
+		im.GET("/ws", chat.WsConnectionManager.WebSocketHandler)
+		im.GET("/all_online", view.AllOnline)
 	}
 
 	{
 		test := s.Group("/test")
 		test.POST("/db", view.TestDb)
+
 	}
 	// set release mode
 	err := s.Run(":" + S.S.Conf.App.Port)

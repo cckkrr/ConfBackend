@@ -66,3 +66,7 @@ func SendMsg(c *gin.Context) {
 	com.OkM(c, "hi")
 
 }
+
+func AllOnline(c *gin.Context) {
+	com.OkD(c, chat.GetAllOnlineUsers())
+}

@@ -6,7 +6,7 @@ import (
 
 func IncomingHTTPTextMsg(fromUUID string, msgText string, isToGroup bool, toEntityUUID string) {
 
-	err := dispatch.Dispatch(fromUUID, msgText, toEntityUUID)
+	err := dispatch.DispatchToSingleOnlineUser(fromUUID, msgText, toEntityUUID)
 	if err != nil {
 		//todo 不在线，存入未读消息
 	}

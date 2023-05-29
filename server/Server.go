@@ -12,7 +12,7 @@ import (
 func StartApi() {
 	s := gin.Default()
 	//s.Use(cors())
-	s.Use(printRequest)
+	//s.Use(printRequest)
 
 	// pad PTerm Services
 	{

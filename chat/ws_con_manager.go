@@ -86,6 +86,7 @@ func (c *ConnectionManager) handleIncomingMessages(user *_User) {
 
 		// Process the received message as needed
 		fmt.Printf("Received message from user %s: %s\n", user.UUID, string(msg))
+
 	}
 }
 
@@ -101,6 +102,7 @@ func (c *ConnectionManager) handleOutgoingMessages(user *_User) {
 
 var WsConnectionManager *ConnectionManager
 
+// InitChatServices 聊天部分入口初始化函数
 func InitChatServices() {
 	WsConnectionManager = &ConnectionManager{
 		Users:      make(map[string]*_User),
@@ -111,12 +113,6 @@ func InitChatServices() {
 	go WsConnectionManager.startUserManagement()
 	log.Println("Chat services initiated")
 
-	// todo 需要在外面转发至此
-	//http.Handle("/ws", WsConnectionManager)
-	//err := http.ListenAndServe(":8080", nil)
-	//if err != nil {
-	//	log.Fatal("Failed to start server:", err)
-	//}
 }
 
 // startUserManagement starts the user management goroutine.

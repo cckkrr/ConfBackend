@@ -15,6 +15,12 @@ func SendMsg(c *gin.Context) {
 	isToGroup := c.PostForm("isToGroup")
 	toEntityUUID := c.PostForm("toEntityUUID")
 
+	// get uuid from middleware
+	uuid := c.GetString("uuid")
+	if uuid == "" {
+		com.Error(c, "uuid is empty")
+		return
+	}
 	if !checkMsgTypeAllowed(msgType) {
 		com.Error(c, "msgType不合法，允许"+allowedMsgTypeToStr())
 		return
@@ -40,8 +46,8 @@ func SendMsg(c *gin.Context) {
 				com.Error(c, "类型为text时，msgText不能为空")
 				return
 			}
-			// todo: send text
-			chat.SendTextMsg(msgText, isToGroupBool, toEntityUUID)
+			go chat.IncomingHTTPTextMsg(uuid, msgText, isToGroupBool, toEntityUUID)
+
 		}
 	case "image":
 		{
@@ -49,8 +55,8 @@ func SendMsg(c *gin.Context) {
 				com.Error(c, "类型为image时，msgFile不能为空")
 				return
 			}
-			//todo send image
-			chat.SendFileMsg(msgType, msgFile, isToGroupBool, toEntityUUID)
+			go chat.IncomingHTTPFileMsg(uuid, msgType, msgFile, isToGroupBool, toEntityUUID)
+
 		}
 	case "audio":
 		{
@@ -58,12 +64,12 @@ func SendMsg(c *gin.Context) {
 				com.Error(c, "类型为audio时，msgFile不能为空")
 				return
 			}
-			//todo send audio
-			chat.SendFileMsg(msgType, msgFile, isToGroupBool, toEntityUUID)
+			go chat.IncomingHTTPFileMsg(uuid, msgType, msgFile, isToGroupBool, toEntityUUID)
+
 		}
 	}
 
-	com.OkM(c, "hi")
+	com.Ok(c)
 
 }
 

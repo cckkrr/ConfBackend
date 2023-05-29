@@ -64,7 +64,7 @@ func initRedis() redis.Client {
 }
 
 func initTaskPool() *ants.Pool {
-	pool, err := ants.NewPool(30)
+	pool, err := ants.NewPool(32, ants.WithNonblocking(false))
 	if err != nil {
 		log.Fatalln("初始化任务池失败", err)
 	}

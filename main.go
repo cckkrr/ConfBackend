@@ -12,7 +12,6 @@ func init() {
 
 // main 入口函数
 func main() {
-
 	// 单独的协程监听车的socket端口
 	go server.StartListenHeroPort()
 

@@ -33,6 +33,13 @@ func SendMsg(c *gin.Context) {
 		com.Error(c, "isToGroup只能为0或1")
 		return
 	}
+
+	// todo 先不开发群聊功能
+	if isToGroup == "1" {
+		com.Error(c, "群聊功能暂不开发")
+		return
+	}
+
 	// 0 is false  1 is true
 	isToGroupBool := false
 	if isToGroup == "1" {

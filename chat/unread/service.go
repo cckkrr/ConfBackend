@@ -1,0 +1,5 @@
+package unread
+
+func SaveUnreadMsg() {
+
+}

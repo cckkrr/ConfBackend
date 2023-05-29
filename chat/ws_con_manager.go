@@ -1,8 +1,6 @@
 package chat
 
 import (
-	"ConfBackend/model"
-	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -144,15 +142,4 @@ func GetAllOnlineUsers() []string {
 		users = append(users, k)
 	}
 	return users
-}
-
-func SendOnlineMsg(msg model.ImMessage) error {
-	if !IsUserOnline(msg.ToEntityUUID) {
-		return fmt.Errorf("user %s is not online", msg.ToEntityUUID)
-	}
-	//put in that user's message queue
-	msgStr, _ := json.Marshal(msg)
-	WsConnectionManager.Users[msg.ToEntityUUID].Messages <- string(msgStr)
-	return nil
-
 }

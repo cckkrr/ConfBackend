@@ -2,6 +2,8 @@ package com
 
 // 通用固定字符串
 var (
+	ProjectPref = "tr_"
+
 	DistanceCachePrefix = "dc_"
 	PacketPrefix        = "pkt_"
 	NodePrefix          = "nd_"
@@ -9,4 +11,22 @@ var (
 	NodePostionPrefix       = "np_"
 	PacketTimelogPrefix     = "pkt_tm_"
 	LatestPackageTimePrefix = "latest_package_time_"
+)
+
+// IMB部分的一些固定字符串
+
+var (
+	IMStr = "im_"
+
+	InboxStr = "inbox_"
+
+	UserStr = "user_"
+
+	MsgStr = "msg_"
+
+	// ImInboxWholePrefix 是预拼接好的key，最后没有冒号，用的时候需要后面拼useruuid
+	ImInboxWholePrefix = ProjectPref + ":" + IMStr + ":" + InboxStr + ":" + UserStr
+
+	// MsgListStaticKey 是静态key，不用拼接什么东西
+	MsgListStaticKey = ProjectPref + ":" + IMStr + ":" + MsgStr
 )

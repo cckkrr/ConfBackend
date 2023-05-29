@@ -1,8 +1,8 @@
 package chat
 
 import (
-	"ConfBackend/model"
-	"encoding/json"
+	"ConfBackend/chat/unread"
+	"ConfBackend/util"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -102,32 +102,34 @@ func (c *ConnectionManager) handleOutgoingMessages(user *_User) {
 
 var WsConnectionManager *ConnectionManager
 
-// InitChatServices 聊天部分入口初始化函数
-func InitChatServices() {
-	WsConnectionManager = &ConnectionManager{
-		Users:      make(map[string]*_User),
-		Register:   make(chan *_User),
-		Unregister: make(chan *_User),
-	}
-
-	go WsConnectionManager.startUserManagement()
-	log.Println("Chat services initiated")
-
-}
-
 // startUserManagement starts the user management goroutine.
 func (c *ConnectionManager) startUserManagement() {
 
 	for {
 		select {
 		case user := <-c.Register:
-			c.Users[user.UUID] = user
-			log.Printf("_User %s connected.\n", user.UUID)
+			{
+				c.Users[user.UUID] = user
+				log.Printf("_User %s connected.\n", user.UUID)
 
+				// START 检查是否有未读消息，有的话发送给用户
+				{
+					// todo 检查是否有未读消息，有的话发送给用户
+					unreadMsg := unread.GetUnreadMessage(user.UUID)
+					util.PadChatMsgFileUrl(&unreadMsg)
+					if len(unreadMsg) > 0 {
+						for _, msg := range unreadMsg {
+							user.Messages <- util.MarshalString(msg)
+						}
+					}
+				} // END
+			}
 		case user := <-c.Unregister:
-			delete(c.Users, user.UUID)
-			close(user.Messages)
-			log.Printf("_User %s disconnected.\n", user.UUID)
+			{
+				delete(c.Users, user.UUID)
+				close(user.Messages)
+				log.Printf("_User %s disconnected.\n", user.UUID)
+			}
 
 		}
 	}
@@ -144,15 +146,4 @@ func GetAllOnlineUsers() []string {
 		users = append(users, k)
 	}
 	return users
-}
-
-func SendOnlineMsg(msg model.ImMessage) error {
-	if !IsUserOnline(msg.ToEntityUUID) {
-		return fmt.Errorf("user %s is not online", msg.ToEntityUUID)
-	}
-	//put in that user's message queue
-	msgStr, _ := json.Marshal(msg)
-	WsConnectionManager.Users[msg.ToEntityUUID].Messages <- string(msgStr)
-	return nil
-
 }

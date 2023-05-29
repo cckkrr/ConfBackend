@@ -3,6 +3,7 @@ package model
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -70,7 +71,7 @@ func (obj *_MemberMgr) WithNickname(nickname string) Option {
 }
 
 // WithCreatedAt created_at获取
-func (obj *_MemberMgr) WithCreatedAt(createdAt string) Option {
+func (obj *_MemberMgr) WithCreatedAt(createdAt time.Time) Option {
 	return optionFunc(func(o *options) { o.query["created_at"] = createdAt })
 }
 
@@ -82,6 +83,11 @@ func (obj *_MemberMgr) WithLoginID(loginID string) Option {
 // WithPassword password获取
 func (obj *_MemberMgr) WithPassword(password string) Option {
 	return optionFunc(func(o *options) { o.query["password"] = password })
+}
+
+// WithDeletedAt deleted_at获取
+func (obj *_MemberMgr) WithDeletedAt(deletedAt time.Time) Option {
+	return optionFunc(func(o *options) { o.query["deleted_at"] = deletedAt })
 }
 
 // GetByOption 功能选项模式获取
@@ -180,14 +186,14 @@ func (obj *_MemberMgr) GetBatchFromNickname(nicknames []string) (results []*Memb
 }
 
 // GetFromCreatedAt 通过created_at获取内容
-func (obj *_MemberMgr) GetFromCreatedAt(createdAt string) (results []*Member, err error) {
+func (obj *_MemberMgr) GetFromCreatedAt(createdAt time.Time) (results []*Member, err error) {
 	err = obj.DB.WithContext(obj.ctx).Model(Member{}).Where("`created_at` = ?", createdAt).Find(&results).Error
 
 	return
 }
 
 // GetBatchFromCreatedAt 批量查找
-func (obj *_MemberMgr) GetBatchFromCreatedAt(createdAts []string) (results []*Member, err error) {
+func (obj *_MemberMgr) GetBatchFromCreatedAt(createdAts []time.Time) (results []*Member, err error) {
 	err = obj.DB.WithContext(obj.ctx).Model(Member{}).Where("`created_at` IN (?)", createdAts).Find(&results).Error
 
 	return
@@ -217,6 +223,20 @@ func (obj *_MemberMgr) GetFromPassword(password string) (results []*Member, err 
 // GetBatchFromPassword 批量查找
 func (obj *_MemberMgr) GetBatchFromPassword(passwords []string) (results []*Member, err error) {
 	err = obj.DB.WithContext(obj.ctx).Model(Member{}).Where("`password` IN (?)", passwords).Find(&results).Error
+
+	return
+}
+
+// GetFromDeletedAt 通过deleted_at获取内容
+func (obj *_MemberMgr) GetFromDeletedAt(deletedAt time.Time) (results []*Member, err error) {
+	err = obj.DB.WithContext(obj.ctx).Model(Member{}).Where("`deleted_at` = ?", deletedAt).Find(&results).Error
+
+	return
+}
+
+// GetBatchFromDeletedAt 批量查找
+func (obj *_MemberMgr) GetBatchFromDeletedAt(deletedAts []time.Time) (results []*Member, err error) {
+	err = obj.DB.WithContext(obj.ctx).Model(Member{}).Where("`deleted_at` IN (?)", deletedAts).Find(&results).Error
 
 	return
 }

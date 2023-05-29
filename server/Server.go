@@ -4,6 +4,7 @@ import (
 	"ConfBackend/chat"
 	com "ConfBackend/common"
 	S "ConfBackend/services"
+	"ConfBackend/task"
 	"ConfBackend/view"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -50,11 +51,18 @@ func StartApi() {
 		im.POST("/sendmsg", view.SendMsg)
 		im.GET("/ws", chat.WsConnectionManager.WebSocketHandler)
 		im.GET("/all_online", view.AllOnline)
+		im.POST("/chat_history", view.ChatHistory)
+		im.POST("/get_batch_nicknames", view.GetBatchNicknames)
+		//todo
 	}
 
 	{
 		test := s.Group("/test")
 		test.POST("/db", view.TestDb)
+		test.GET("/hasid", func(c *gin.Context) {
+			id := c.Query("id")
+			task.HaveValidUser(id)
+		})
 
 	}
 	// set release mode

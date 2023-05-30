@@ -19,3 +19,13 @@ func GenPacketTimelogPrefix() string {
 func GenLatestUpdatePackageTimeKey() string {
 	return com.ProjectPref + ":" + com.DistanceCachePrefix + ":" + com.LatestPackageTimePrefix
 }
+
+// GenUserInboxKey 用于获取一个用户的inbox的key，输入user uuid，返回key
+func GenUserInboxKey(useruuid string) string {
+	return com.ImInboxWholePrefix + ":" + useruuid
+}
+
+// GenMsgListStaticKey 返回一个静态的消息列表list，即 tr_:im_:msg_
+func GenMsgListStaticKey() string {
+	return com.MsgListStaticKey
+}

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/panjf2000/ants/v2"
 	"github.com/redis/go-redis/v9"
+	"golang.org/x/net/context"
 	"gopkg.in/gcfg.v1"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -24,6 +25,8 @@ type service struct {
 	TaskPool *ants.Pool
 	//  a gorm db
 	Mysql *gorm.DB
+	// 一个空白context
+	Context context.Context
 }
 
 func InitServices() {
@@ -41,6 +44,7 @@ func InitServices() {
 			Redis:    initRedis(),
 			TaskPool: initTaskPool(),
 			Mysql:    initMysql(),
+			Context:  initEmptyContext(),
 		}
 	})
 }
@@ -78,4 +82,8 @@ func initMysql() *gorm.DB {
 		log.Fatalln("初始化数据库连接失败", err)
 	}
 	return db
+}
+
+func initEmptyContext() context.Context {
+	return context.Background()
 }

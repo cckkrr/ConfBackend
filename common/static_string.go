@@ -22,11 +22,17 @@ var (
 
 	UserStr = "user_"
 
-	MsgStr = "msg_"
+	MsgStr = "allMsgLst_"
 
 	// ImInboxWholePrefix 是预拼接好的key，最后没有冒号，用的时候需要后面拼useruuid
 	ImInboxWholePrefix = ProjectPref + ":" + IMStr + ":" + InboxStr + ":" + UserStr
 
-	// MsgListStaticKey 是静态key，不用拼接什么东西
+	// MsgListStaticKey 是静态key，不用拼接什么东西，最后没有冒号
 	MsgListStaticKey = ProjectPref + ":" + IMStr + ":" + MsgStr
+)
+
+var (
+	MemberStr = "members_"
+
+	MemberWholeKey = ProjectPref + ":" + MemberStr
 )

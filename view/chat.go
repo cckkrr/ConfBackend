@@ -46,6 +46,9 @@ func SendMsg(c *gin.Context) {
 		isToGroupBool = true
 	}
 
+	// msg uuid init
+	msgUuid := ""
+
 	switch msgType {
 	case "text":
 		{
@@ -53,7 +56,7 @@ func SendMsg(c *gin.Context) {
 				com.Error(c, "类型为text时，msgText不能为空")
 				return
 			}
-			go chat.IncomingHTTPTextMsg(uuid, msgText, isToGroupBool, toEntityUUID)
+			msgUuid, _ = chat.IncomingHTTPTextMsg(uuid, msgText, isToGroupBool, toEntityUUID)
 
 		}
 	case "image":
@@ -76,7 +79,7 @@ func SendMsg(c *gin.Context) {
 		}
 	}
 
-	com.Ok(c)
+	com.OkD(c, msgUuid)
 
 }
 

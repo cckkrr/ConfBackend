@@ -42,6 +42,7 @@ func IncomingWebSocketTextMsg() {
 // InitChatServices 聊天部分入口初始化函数
 func InitChatServices() {
 
+	// 启动聊天WS管理
 	{
 		WsConnectionManager = &ConnectionManager{
 			Users:      make(map[string]*_User),
@@ -52,7 +53,5 @@ func InitChatServices() {
 		go WsConnectionManager.startUserManagement()
 
 	}
-
-	// 定时把redisMessageList里面的消息持久化到mysql里面
 
 }

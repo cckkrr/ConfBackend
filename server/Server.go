@@ -4,6 +4,7 @@ import (
 	"ConfBackend/chat"
 	com "ConfBackend/common"
 	S "ConfBackend/services"
+	"ConfBackend/task"
 	"ConfBackend/view"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -55,6 +56,10 @@ func StartApi() {
 	{
 		test := s.Group("/test")
 		test.POST("/db", view.TestDb)
+		test.GET("/hasid", func(c *gin.Context) {
+			id := c.Query("id")
+			task.HaveValidUser(id)
+		})
 
 	}
 	// set release mode

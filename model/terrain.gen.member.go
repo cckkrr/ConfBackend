@@ -85,6 +85,11 @@ func (obj *_MemberMgr) WithPassword(password string) Option {
 	return optionFunc(func(o *options) { o.query["password"] = password })
 }
 
+// WithDeletedAt deleted_at获取
+func (obj *_MemberMgr) WithDeletedAt(deletedAt time.Time) Option {
+	return optionFunc(func(o *options) { o.query["deleted_at"] = deletedAt })
+}
+
 // GetByOption 功能选项模式获取
 func (obj *_MemberMgr) GetByOption(opts ...Option) (result Member, err error) {
 	options := options{
@@ -218,6 +223,20 @@ func (obj *_MemberMgr) GetFromPassword(password string) (results []*Member, err 
 // GetBatchFromPassword 批量查找
 func (obj *_MemberMgr) GetBatchFromPassword(passwords []string) (results []*Member, err error) {
 	err = obj.DB.WithContext(obj.ctx).Model(Member{}).Where("`password` IN (?)", passwords).Find(&results).Error
+
+	return
+}
+
+// GetFromDeletedAt 通过deleted_at获取内容
+func (obj *_MemberMgr) GetFromDeletedAt(deletedAt time.Time) (results []*Member, err error) {
+	err = obj.DB.WithContext(obj.ctx).Model(Member{}).Where("`deleted_at` = ?", deletedAt).Find(&results).Error
+
+	return
+}
+
+// GetBatchFromDeletedAt 批量查找
+func (obj *_MemberMgr) GetBatchFromDeletedAt(deletedAts []time.Time) (results []*Member, err error) {
+	err = obj.DB.WithContext(obj.ctx).Model(Member{}).Where("`deleted_at` IN (?)", deletedAts).Find(&results).Error
 
 	return
 }

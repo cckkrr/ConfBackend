@@ -29,3 +29,7 @@ func GenUserInboxKey(useruuid string) string {
 func GenMsgListStaticKey() string {
 	return com.MsgListStaticKey
 }
+
+func GenMemberInfoKey(uuid string) string {
+	return com.ProjectPref + ":" + com.MemberStr + ":" + uuid
+}

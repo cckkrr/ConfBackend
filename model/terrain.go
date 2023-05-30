@@ -122,12 +122,13 @@ var ImMessageColumns = struct {
 
 // Member [...]
 type Member struct {
-	ID        uint      `gorm:"primaryKey;column:id" json:"-"`
-	UUID      string    `gorm:"column:uuid" json:"uuid"`
+	ID        uint      `gorm:"primaryKey;column:id" json:"-" redis:"id"`
+	UUID      string    `gorm:"column:uuid" json:"uuid" redis:"uuid"`
 	Nickname  string    `gorm:"column:nickname" json:"nickname"`
 	CreatedAt time.Time `gorm:"column:created_at" json:"createdAt"`
 	LoginID   string    `gorm:"column:login_id" json:"loginId"`
 	Password  string    `gorm:"column:password" json:"password"`
+	DeletedAt time.Time `gorm:"column:deleted_at" json:"deletedAt"`
 }
 
 // TableName get sql table name.获取数据库表名
@@ -143,6 +144,7 @@ var MemberColumns = struct {
 	CreatedAt string
 	LoginID   string
 	Password  string
+	DeletedAt string
 }{
 	ID:        "id",
 	UUID:      "uuid",
@@ -150,6 +152,7 @@ var MemberColumns = struct {
 	CreatedAt: "created_at",
 	LoginID:   "login_id",
 	Password:  "password",
+	DeletedAt: "deleted_at",
 }
 
 // SensorStat [...]

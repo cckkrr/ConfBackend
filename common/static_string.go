@@ -36,3 +36,8 @@ var (
 
 	MemberWholeKey = ProjectPref + ":" + MemberStr
 )
+
+var (
+	// NicknameKey hash key
+	NicknameKey = "nickname"
+)

@@ -163,8 +163,8 @@ func (obj *_ImMessageMgr) GetBatchFromID(ids []uint64) (results []*ImMessage, er
 }
 
 // GetFromUUID 通过uuid获取内容
-func (obj *_ImMessageMgr) GetFromUUID(uuid string) (results []*ImMessage, err error) {
-	err = obj.DB.WithContext(obj.ctx).Model(ImMessage{}).Where("`uuid` = ?", uuid).Find(&results).Error
+func (obj *_ImMessageMgr) GetFromUUID(uuid string) (result ImMessage, err error) {
+	err = obj.DB.WithContext(obj.ctx).Model(ImMessage{}).Where("`uuid` = ?", uuid).First(&result).Error
 
 	return
 }
@@ -265,6 +265,20 @@ func (obj *_ImMessageMgr) GetBatchFromCreatedAt(createdAts []time.Time) (results
 // FetchByPrimaryKey primary or index 获取唯一内容
 func (obj *_ImMessageMgr) FetchByPrimaryKey(id uint64) (result ImMessage, err error) {
 	err = obj.DB.WithContext(obj.ctx).Model(ImMessage{}).Where("`id` = ?", id).First(&result).Error
+
+	return
+}
+
+// FetchUniqueByUniquuid primary or index 获取唯一内容
+func (obj *_ImMessageMgr) FetchUniqueByUniquuid(uuid string) (result ImMessage, err error) {
+	err = obj.DB.WithContext(obj.ctx).Model(ImMessage{}).Where("`uuid` = ?", uuid).First(&result).Error
+
+	return
+}
+
+// FetchIndexBySortedByTime  获取多个内容
+func (obj *_ImMessageMgr) FetchIndexBySortedByTime(createdAt time.Time) (results []*ImMessage, err error) {
+	err = obj.DB.WithContext(obj.ctx).Model(ImMessage{}).Where("`created_at` = ?", createdAt).Find(&results).Error
 
 	return
 }

@@ -3,6 +3,7 @@ package model
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -70,7 +71,7 @@ func (obj *_MemberMgr) WithNickname(nickname string) Option {
 }
 
 // WithCreatedAt created_at获取
-func (obj *_MemberMgr) WithCreatedAt(createdAt string) Option {
+func (obj *_MemberMgr) WithCreatedAt(createdAt time.Time) Option {
 	return optionFunc(func(o *options) { o.query["created_at"] = createdAt })
 }
 
@@ -180,14 +181,14 @@ func (obj *_MemberMgr) GetBatchFromNickname(nicknames []string) (results []*Memb
 }
 
 // GetFromCreatedAt 通过created_at获取内容
-func (obj *_MemberMgr) GetFromCreatedAt(createdAt string) (results []*Member, err error) {
+func (obj *_MemberMgr) GetFromCreatedAt(createdAt time.Time) (results []*Member, err error) {
 	err = obj.DB.WithContext(obj.ctx).Model(Member{}).Where("`created_at` = ?", createdAt).Find(&results).Error
 
 	return
 }
 
 // GetBatchFromCreatedAt 批量查找
-func (obj *_MemberMgr) GetBatchFromCreatedAt(createdAts []string) (results []*Member, err error) {
+func (obj *_MemberMgr) GetBatchFromCreatedAt(createdAts []time.Time) (results []*Member, err error) {
 	err = obj.DB.WithContext(obj.ctx).Model(Member{}).Where("`created_at` IN (?)", createdAts).Find(&results).Error
 
 	return

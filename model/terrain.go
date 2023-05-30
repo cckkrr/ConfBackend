@@ -122,12 +122,12 @@ var ImMessageColumns = struct {
 
 // Member [...]
 type Member struct {
-	ID        uint   `gorm:"primaryKey;column:id" json:"-"`
-	UUID      string `gorm:"column:uuid" json:"uuid"`
-	Nickname  string `gorm:"column:nickname" json:"nickname"`
-	CreatedAt string `gorm:"column:created_at" json:"createdAt"`
-	LoginID   string `gorm:"column:login_id" json:"loginId"`
-	Password  string `gorm:"column:password" json:"password"`
+	ID        uint      `gorm:"primaryKey;column:id" json:"-"`
+	UUID      string    `gorm:"column:uuid" json:"uuid"`
+	Nickname  string    `gorm:"column:nickname" json:"nickname"`
+	CreatedAt time.Time `gorm:"column:created_at" json:"createdAt"`
+	LoginID   string    `gorm:"column:login_id" json:"loginId"`
+	Password  string    `gorm:"column:password" json:"password"`
 }
 
 // TableName get sql table name.获取数据库表名

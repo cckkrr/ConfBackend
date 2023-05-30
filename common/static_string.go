@@ -8,7 +8,7 @@ var (
 	PacketPrefix        = "pkt_"
 	NodePrefix          = "nd_"
 
-	NodePostionPrefix       = "np_"
+	NodePositionPrefix      = "np_"
 	PacketTimelogPrefix     = "pkt_tm_"
 	LatestPackageTimePrefix = "latest_package_time_"
 )

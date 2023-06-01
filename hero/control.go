@@ -34,13 +34,14 @@ var CommandStringChan = make(chan string)
 var SendCommandInterval time.Duration
 
 type heroCommand struct {
-	Forward  bool
-	Backward bool
-	Left     bool
-	Right    bool
+	Forward    bool
+	Backward   bool
+	Left       bool
+	Right      bool
+	SpeedLevel string
 }
 
-func (hc *heroCommand) Validate() {
+func (hc *heroCommand) ValidateDirection() {
 	if hc.Forward && hc.Backward {
 		hc.Forward = false
 		hc.Backward = false
@@ -76,7 +77,8 @@ func (hc *heroCommand) ToCommandString() string {
 	} else {
 		s += "-"
 	}
-	s += "----"
+	s += hc.SpeedLevel
+	s += "---"
 	return s
 }
 
@@ -95,7 +97,11 @@ func StringToSafeHeroCommand(s string) (hc heroCommand) {
 	if s[3] == '1' {
 		hc.Right = true
 	}
-	hc.Validate()
+
+	// speed level is the 5th char as string
+	hc.SpeedLevel = string(s[4])
+
+	hc.ValidateDirection()
 	return
 
 }
@@ -132,6 +138,7 @@ func HandleConnection(conn net.Conn) {
 		select {
 		case commandString := <-CommandStringChan:
 			{
+				log.Println("commandString:", commandString)
 				// 如果指令不合法，则不发送
 				if !IsStringCommandValid(commandString) {
 					continue
@@ -143,6 +150,9 @@ func HandleConnection(conn net.Conn) {
 
 				//turn it into safe command and turn it into string and then send it
 				command := StringToSafeHeroCommand(commandString)
+				if !shouldSendToHero(command) {
+					continue
+				}
 				_, err := conn.Write([]byte(command.ToCommandString()))
 				// 记录最新发送命令的时间戳
 				lastSendCommandTime = time.Now()
@@ -158,14 +168,46 @@ func HandleConnection(conn net.Conn) {
 
 }
 
+// IsStringCommandValid 判断字符串是否是合法的命令字符串
+// 此处只判断长度是否为8，前4位是否为"1"或"-"，第五位是否为合法速度档位，
+// 不判断方向是否合法
 func IsStringCommandValid(s string) bool {
 	if len(s) != 8 {
 		return false
 	}
-	for _, c := range s {
-		if c != '-' && c != '1' {
+
+	// if the first 4 char is "----", then it is not valid
+	if s[0] == '-' && s[1] == '-' && s[2] == '-' && s[3] == '-' {
+		return false
+	}
+
+	// the first 4 char must be either "1" or "-"
+	for i := 0; i < 4; i++ {
+		if s[i] != '1' && s[i] != '-' {
 			return false
 		}
 	}
+
+	// the 5th char can only be from 1-4
+	if s[4] < '1' || s[4] > '4' {
+		return false
+	}
+
+	// last three must be "-"
+	for i := 5; i < 8; i++ {
+		if s[i] != '-' {
+			return false
+		}
+	}
+
 	return true
+}
+
+// shouldSendToHero Whether the command should be sent to hero.
+// e.g., if the command contains no direction, then it should not be sent to hero.
+func shouldSendToHero(command heroCommand) bool {
+	if command.Forward || command.Backward || command.Left || command.Right {
+		return true
+	}
+	return false
 }

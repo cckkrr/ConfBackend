@@ -8,6 +8,7 @@ import (
 	"gopkg.in/gcfg.v1"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"log"
 	"sync"
 )
@@ -77,7 +78,9 @@ func initTaskPool() *ants.Pool {
 
 func initMysql() *gorm.DB {
 	dns := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", S.Conf.Database.Username, S.Conf.Database.Password, S.Conf.Database.Url, S.Conf.Database.Port, S.Conf.Database.TableName)
-	db, err := gorm.Open(mysql.Open(dns), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(dns), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info), // 日志配置
+	})
 	if err != nil {
 		log.Fatalln("初始化数据库连接失败", err)
 	}

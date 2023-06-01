@@ -116,6 +116,7 @@ func (c *ConnectionManager) startUserManagement() {
 				{
 					// todo 检查是否有未读消息，有的话发送给用户
 					unreadMsg := unread.GetUnreadMessage(user.UUID)
+					util.PadChatMsgFileUrl(&unreadMsg)
 					if len(unreadMsg) > 0 {
 						for _, msg := range unreadMsg {
 							user.Messages <- util.MarshalString(msg)

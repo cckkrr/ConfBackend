@@ -2,6 +2,7 @@ package server
 
 import (
 	com "ConfBackend/common"
+	"ConfBackend/task"
 	"github.com/gin-gonic/gin"
 	"net/http/httputil"
 )
@@ -35,6 +36,13 @@ func MustHasUserUUID() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+
+		if !task.HaveValidUser(uuid) {
+			com.Error(c, "找不到X-User-UUID对应的用户："+uuid)
+			c.Abort()
+			return
+		}
+
 		c.Set("uuid", uuid)
 	}
 }

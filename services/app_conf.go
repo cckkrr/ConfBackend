@@ -25,4 +25,8 @@ type AppConfig struct {
 	Location struct {
 		UpdateIntervalInSecond int
 	}
+	Chat struct {
+		SaveStaticFileDirPrefix string
+		ServerFileUrlPrefix     string
+	}
 }

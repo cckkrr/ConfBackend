@@ -51,6 +51,7 @@ func StartApi() {
 		im.POST("/sendmsg", view.SendMsg)
 		im.GET("/ws", chat.WsConnectionManager.WebSocketHandler)
 		im.GET("/all_online", view.AllOnline)
+		im.POST("/chat_history", view.ChatHistory)
 	}
 
 	{

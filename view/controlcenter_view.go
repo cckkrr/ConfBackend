@@ -48,6 +48,7 @@ func HeroControl(ctx *gin.Context) {
 	}
 	// handler the connection to websocket
 	handler, err := upgrader.Upgrade(ctx.Writer, ctx.Request, ctx.Writer.Header())
+	log.Println("接入ws车辆控制")
 	curController = handler
 	if err != nil {
 		log.Println("handler error:", err)

@@ -4,10 +4,17 @@ import (
 	"ConfBackend/chat"
 	com "ConfBackend/common"
 	S "ConfBackend/services"
+	"ConfBackend/util"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"path/filepath"
 )
+
+type returnBody struct {
+	NewMid     string `json:"newMid"`
+	MsgType    string `json:"msgType"`
+	MsgFileUrl string `json:"msgFileUrl"`
+}
 
 func SendMsg(c *gin.Context) {
 	//multipart/form-data
@@ -72,37 +79,43 @@ func SendMsg(c *gin.Context) {
 				com.Error(c, err.Error())
 				return
 			}
+			ret := returnBody{
+				NewMid:     msgUuid,
+				MsgType:    msgType,
+				MsgFileUrl: "",
+			}
+			com.OkD(c, ret)
+			return
 
 		}
 	case "image":
-		{
-			if msgFile.Size == 0 {
-				com.Error(c, "类型为image时，msgFile不能为空")
-				return
-			}
-			// save file
+		/*		{
+				if msgFile.Size == 0 {
+					com.Error(c, "类型为image时，msgFile不能为空")
+					return
+				}
+				// save file
+				fileType := filepath.Ext(msgFile.Filename)
+				newFileName := uuid.New().String() + fileType
+				newFileDir := filepath.Join(S.S.Conf.Chat.SaveStaticFileDirPrefix, newFileName)
+				err := c.SaveUploadedFile(msgFile, newFileDir)
+				if err != nil {
+					com.Error(c, "文件保存失败")
+					return
+				}
 
-			fileType := filepath.Ext(msgFile.Filename)
-			//uuid without "-"
-			newFileName := uuid.New().String() + fileType
-			newFileDir := filepath.Join(S.S.Conf.Chat.SaveStaticFileDirPrefix, newFileName)
-			err := c.SaveUploadedFile(msgFile, newFileDir)
-			if err != nil {
-				com.Error(c, "文件保存失败")
-				return
-			}
+				msgUuid, err = chat.IncomingHTTPFileMsg(fromUserUuid, msgType, isToGroupBool, toEntityUUID, newFileName, newFileDir)
+				if err != nil {
+					com.Error(c, err.Error())
+					return
+				}
 
-			msgUuid, err = chat.IncomingHTTPFileMsg(fromUserUuid, msgType, isToGroupBool, toEntityUUID, newFileName, newFileDir)
-			if err != nil {
-				com.Error(c, err.Error())
-				return
-			}
-
-		}
+			}*/
+		fallthrough
 	case "audio":
 		{
 			if msgFile.Size == 0 {
-				com.Error(c, "类型为image时，msgFile不能为空")
+				com.Error(c, "类型为文件时，msgFile不能为空")
 				return
 			}
 			// save file
@@ -121,10 +134,17 @@ func SendMsg(c *gin.Context) {
 				return
 			}
 
+			ret := returnBody{
+				NewMid:     msgUuid,
+				MsgType:    msgType,
+				MsgFileUrl: util.ConcatFullFileUrl(newFileName),
+			}
+
+			com.OkD(c, ret)
+			return
+
 		}
 	}
-
-	com.OkD(c, msgUuid)
 
 }
 

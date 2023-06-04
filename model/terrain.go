@@ -122,8 +122,8 @@ var ImMessageColumns = struct {
 
 // Member [...]
 type Member struct {
-	ID        uint      `gorm:"primaryKey;column:id" json:"-" redis:"id"`
-	UUID      string    `gorm:"column:uuid" json:"uuid" redis:"uuid"`
+	ID        uint      `gorm:"primaryKey;column:id" json:"-"`
+	UUID      string    `gorm:"column:uuid" json:"uuid"`
 	Nickname  string    `gorm:"column:nickname" json:"nickname"`
 	CreatedAt time.Time `gorm:"column:created_at" json:"createdAt"`
 	LoginID   string    `gorm:"column:login_id" json:"loginId"`

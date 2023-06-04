@@ -4,9 +4,12 @@ import (
 	"ConfBackend/chat"
 	com "ConfBackend/common"
 	S "ConfBackend/services"
+	"ConfBackend/task"
 	"ConfBackend/util"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/tidwall/gjson"
+	"io"
 	"path/filepath"
 )
 
@@ -178,5 +181,46 @@ func ChatHistory(c *gin.Context) {
 		// 私聊
 		com.OkD(c, chat.GetChatHistory(fromUuid, objectEntityUuid, sinceMid))
 	}
+
+}
+
+type batchNicknameRetBody struct {
+	Uuid     string      `json:"uuid"`
+	Nickname interface{} `json:"nickname"`
+}
+
+func GetBatchNicknames(c *gin.Context) {
+	// get c req body content
+	b := c.Request.Body
+	body, err := io.ReadAll(b)
+	if err != nil {
+		return
+	}
+	strArr := gjson.Get(string(body), "uuids").Array()
+	strs := make([]string, len(strArr))
+	// convert strArr to an array of str
+	for i, v := range strArr {
+		strs[i] = v.String()
+	}
+
+	res := task.GetNickNames(strs)
+
+	ret := make([]batchNicknameRetBody, 0)
+	for i, v := range res {
+		ret = append(ret, batchNicknameRetBody{
+			Uuid:     i,
+			Nickname: v,
+		})
+	}
+
+	//batchNicknameRetBody := make([]batchNicknameRetBody, len(res))
+	//for i, v := range res {
+	//	// uuid is key of map res
+	//	batchNicknameRetBody[i] = batchNicknameRetBody{
+	//    Uuid:     i,
+	//    Nickname: v,
+	//  }
+	//}
+	com.OkD(c, ret)
 
 }

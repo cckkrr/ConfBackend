@@ -30,6 +30,6 @@ func GenMsgListStaticKey() string {
 	return com.MsgListStaticKey
 }
 
-func GenMemberInfoKey(uuid string) string {
-	return com.ProjectPref + ":" + com.MemberStr + ":" + uuid
+func GenMemberInfoNicknameKey(uuid string) string {
+	return com.ProjectPref + ":" + com.MemberStr + ":" + com.NicknameKey + ":" + uuid
 }

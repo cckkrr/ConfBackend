@@ -39,5 +39,5 @@ var (
 
 var (
 	// NicknameKey hash key
-	NicknameKey = "nickname"
+	NicknameKey = "nickname_"
 )

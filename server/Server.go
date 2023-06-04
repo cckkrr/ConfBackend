@@ -52,6 +52,8 @@ func StartApi() {
 		im.GET("/ws", chat.WsConnectionManager.WebSocketHandler)
 		im.GET("/all_online", view.AllOnline)
 		im.POST("/chat_history", view.ChatHistory)
+		im.POST("/get_batch_nicknames", view.GetBatchNicknames)
+		//todo
 	}
 
 	{

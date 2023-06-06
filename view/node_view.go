@@ -47,9 +47,12 @@ func setToRedis(c *gin.Context, nodeId, packetId string, info locInfoType) {
 	// 设置距离信息，key编号：dc_:pkt_{包编号}:nd_{节点编号}
 	// hash key: 节点编号，hash value: 距离
 
-	r.HSet(c, util.GenDistanceCacheKey(packetId, nodeId), slice)
+	p := r.Pipeline()
+	p.HSet(c, util.GenDistanceCacheKey(packetId, nodeId), slice)
+
+	//r.HSet(c, util.GenDistanceCacheKey(packetId, nodeId), slice)
 	// get current timestamp
-	timestamp := time.Now().Unix()
+	timestamp := time.Now().UnixMilli()
 	b := redis.Z{
 		Score:  float64(timestamp),
 		Member: packetId,
@@ -57,6 +60,11 @@ func setToRedis(c *gin.Context, nodeId, packetId string, info locInfoType) {
 
 	// 在dc_下设置一个有序集合，记录首个该编号上传的时间。key编号：dc_:pkt_tm_
 	// zset value: 包编号，score: 时间戳
-	r.ZAddNX(c, util.GenPacketTimelogPrefix(), b)
+	//r.ZAddNX(c, util.GenPacketTimelogPrefix(), b)
+	p.ZAddNX(c, util.GenPacketTimelogPrefix(), b)
+	_, err := p.Exec(c)
+	if err != nil {
+		return
+	}
 
 }

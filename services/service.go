@@ -65,6 +65,12 @@ func initRedis() redis.Client {
 		Password: S.Conf.Redis.Password,
 		DB:       S.Conf.Redis.Db,
 	})
+	pong, err := tempRedis.Ping(context.Background()).Result()
+	if err != nil {
+		log.Fatalln("初始化redis失败", err)
+	} else {
+		log.Println("redis连接成功", pong)
+	}
 	return tempRedis
 }
 

@@ -5,7 +5,6 @@ import (
 	S "ConfBackend/services"
 	"ConfBackend/util"
 	"log"
-	"time"
 )
 
 func HaveValidUser(userUuid string) bool {
@@ -66,9 +65,14 @@ func LoadMysqlUserToRedis(mber ...model.Member) {
 		}
 		p := S.S.Redis.TxPipeline()
 		p.MSet(S.S.Context, data)
-		for _, key := range keys {
-			p.Expire(S.S.Context, key, time.Minute*5)
+
+		{
+			// 设置是否key过期，注释掉则不过期
+			/*			for _, key := range keys {
+						p.Expire(S.S.Context, key, time.Minute*5)
+					}*/
 		}
+
 		exec, err := p.Exec(S.S.Context)
 		if err != nil {
 			return

@@ -42,6 +42,7 @@ func StartApi() {
 		// The internal_model center's api
 		cc := s.Group("/cc")
 		cc.GET("/hero_control", view.HeroControl)
+		cc.POST("/login", view.CCLogin)
 	}
 
 	{

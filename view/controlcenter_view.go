@@ -3,8 +3,12 @@ package view
 import (
 	com "ConfBackend/common"
 	"ConfBackend/hero"
+	"ConfBackend/model"
+	S "ConfBackend/services"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"github.com/tidwall/gjson"
+	"io"
 	"log"
 	"net/http"
 )
@@ -87,4 +91,15 @@ func processControl() {
 		}
 
 	}
+}
+
+func CCLogin(c *gin.Context) {
+	// json has two fields: loginId and pw
+	body, _ := io.ReadAll(c.Request.Body)
+	loginId := gjson.Get(string(body), "loginId").String()
+	pw := gjson.Get(string(body), "pw").String()
+	member := new(model.Member)
+
+	S.S.Mysql.Where("login_id = ? AND password = ? AND delete_at is null", loginId, pw).First(member)
+
 }

@@ -33,7 +33,7 @@ func StartApi() {
 		// The car's api group
 		car := s.Group("/hero")
 		car.GET("/ping", func(context *gin.Context) {
-			com.OkD(context, "Hello!!!")
+			com.OkD(context, "Hello!!")
 		})
 	}
 

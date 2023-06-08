@@ -93,13 +93,38 @@ func processControl() {
 	}
 }
 
+type loginBodyType struct {
+	Token string `json:"token"`
+}
+
 func CCLogin(c *gin.Context) {
 	// json has two fields: loginId and pw
 	body, _ := io.ReadAll(c.Request.Body)
 	loginId := gjson.Get(string(body), "loginId").String()
 	pw := gjson.Get(string(body), "pw").String()
-	member := new(model.Member)
+	members := make([]model.Member, 0)
 
-	S.S.Mysql.Where("login_id = ? AND password = ? AND delete_at is null", loginId, pw).First(member)
+	if loginId == "" || pw == "" {
+		com.Error(c, "用户名或密码不能为空")
+		return
+	}
+
+	S.S.Mysql.Where("login_id = ?", loginId).Find(&members)
+
+	if len(members) == 0 {
+		com.Error(c, "用户名不存在")
+		return
+	}
+	member := members[0]
+	if member.Password != pw {
+		com.Error(c, "密码错误")
+		return
+	}
+	retBody := loginBodyType{
+		Token: member.UUID,
+	}
+	com.OkD(c, retBody)
+
+	log.Println("member", members)
 
 }

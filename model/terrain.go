@@ -4,6 +4,41 @@ import (
 	"time"
 )
 
+// HeroPcdUoload [...]
+type HeroPcdUoload struct {
+	ID                       uint      `gorm:"primaryKey;column:id" json:"-"`
+	FileUUID                 string    `gorm:"column:file_uuid" json:"fileUuid"`
+	CreatedAt                time.Time `gorm:"column:created_at" json:"createdAt"`
+	OriginalUploadedFilename string    `gorm:"column:original_uploaded_filename" json:"originalUploadedFilename"`
+	SavedFilename            string    `gorm:"column:saved_filename" json:"savedFilename"`
+	FileSize                 int64     `gorm:"column:file_size" json:"fileSize"`
+	SaveDuration             int       `gorm:"column:save_duration" json:"saveDuration"`
+}
+
+// TableName get sql table name.获取数据库表名
+func (m *HeroPcdUoload) TableName() string {
+	return "t_hero_pcd_uoload"
+}
+
+// HeroPcdUoloadColumns get sql column name.获取数据库列名
+var HeroPcdUoloadColumns = struct {
+	ID                       string
+	FileUUID                 string
+	CreatedAt                string
+	OriginalUploadedFilename string
+	SavedFilename            string
+	FileSize                 string
+	SaveDuration             string
+}{
+	ID:                       "id",
+	FileUUID:                 "file_uuid",
+	CreatedAt:                "created_at",
+	OriginalUploadedFilename: "original_uploaded_filename",
+	SavedFilename:            "saved_filename",
+	FileSize:                 "file_size",
+	SaveDuration:             "save_duration",
+}
+
 // ImCacheInbox [...]
 type ImCacheInbox struct {
 	ID            uint64 `gorm:"primaryKey;column:id" json:"-"`

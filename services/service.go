@@ -4,12 +4,17 @@ import (
 	"fmt"
 	"github.com/panjf2000/ants/v2"
 	"github.com/redis/go-redis/v9"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 	"gopkg.in/gcfg.v1"
+	"gopkg.in/natefinch/lumberjack.v2"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"io"
 	"log"
+	"os"
+	"path"
 	"sync"
 )
 
@@ -28,6 +33,9 @@ type service struct {
 	Mysql *gorm.DB
 	// 一个空白context
 	Context context.Context
+
+	// 一个logrus的logger
+	Logger *logrus.Logger
 }
 
 func InitServices() {
@@ -46,6 +54,7 @@ func InitServices() {
 			TaskPool: initTaskPool(),
 			Mysql:    initMysql(),
 			Context:  initEmptyContext(),
+			Logger:   initLogger(),
 		}
 	})
 }
@@ -95,4 +104,21 @@ func initMysql() *gorm.DB {
 
 func initEmptyContext() context.Context {
 	return context.Background()
+}
+
+func initLogger() *logrus.Logger {
+	// init a lumberjack logger
+	lumberjackLogger := &lumberjack.Logger{
+		Filename:   path.Join(S.Conf.Log.LogFileDirPref, S.Conf.Log.LogFileName), // 日志文件路径
+		MaxSize:    10,                                                           // 每个日志文件保存的最大尺寸 单位：M
+		MaxBackups: 1,                                                            // 日志文件最多保存多少个备份
+		MaxAge:     7,                                                            // 文件最多保存多少天
+		Compress:   false,                                                        // 是否压缩
+	}
+	// init a logrus logger
+	logrusLogger := logrus.New()
+	multiWriter := io.MultiWriter(os.Stdout, lumberjackLogger)
+	logrusLogger.SetOutput(multiWriter)
+
+	return logrusLogger
 }

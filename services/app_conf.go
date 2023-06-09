@@ -21,6 +21,7 @@ type AppConfig struct {
 	Car struct {
 		Port                             string
 		SendCommandIntervalInMillisecond int64
+		SaveStatidPcdFileDirPrefix       string
 	}
 	Location struct {
 		UpdateIntervalInSecond int
@@ -28,5 +29,9 @@ type AppConfig struct {
 	Chat struct {
 		SaveStaticFileDirPrefix string
 		ServerFileUrlPrefix     string
+	}
+	Log struct {
+		LogFileDirPref string
+		LogFileName    string
 	}
 }

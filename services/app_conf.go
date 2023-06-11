@@ -34,4 +34,7 @@ type AppConfig struct {
 		LogFileDirPref string
 		LogFileName    string
 	}
+	Pcd struct {
+		ServerPCDFileUrlPrefix string
+	}
 }

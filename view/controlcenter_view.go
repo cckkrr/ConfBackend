@@ -5,8 +5,10 @@ import (
 	"ConfBackend/hero"
 	"ConfBackend/model"
 	S "ConfBackend/services"
+	"ConfBackend/util"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 	"io"
 	"log"
@@ -28,6 +30,7 @@ func ClearCurController() {
 		log.Println("close the current controller error: ", err)
 	}
 	curController = nil
+	S.S.Logger.Infof("当前小车控制已经清空")
 }
 
 // IsControlAvailable 查看控制位置是否可用，如果不可用说明当前已经有人在控制
@@ -44,15 +47,18 @@ var upgrader = websocket.Upgrader{
 }
 
 func HeroControl(ctx *gin.Context) {
+	S.S.Logger.Infof("小车控制请求 IN")
 
 	// 如果当前已经有人在控制了，那么就不允许再有人控制了
 	if !IsControlAvailable() {
 		com.Error(ctx, "当前小车正在被他人控制")
+		S.S.Logger.Infof("小车当前正在被他人控制")
 		return
 	}
 	// handler the connection to websocket
 	handler, err := upgrader.Upgrade(ctx.Writer, ctx.Request, ctx.Writer.Header())
 	log.Println("接入ws车辆控制")
+	S.S.Logger.Infof("接入ws车辆控制")
 	curController = handler
 	if err != nil {
 		log.Println("handler error:", err)
@@ -102,6 +108,12 @@ func CCLogin(c *gin.Context) {
 	body, _ := io.ReadAll(c.Request.Body)
 	loginId := gjson.Get(string(body), "loginId").String()
 	pw := gjson.Get(string(body), "pw").String()
+	// get ip addr of the client
+	S.S.Logger.WithFields(logrus.Fields{
+		"loginId": loginId,
+		"pw":      pw,
+	}).Info("login")
+
 	members := make([]model.Member, 0)
 
 	if loginId == "" || pw == "" {
@@ -113,18 +125,36 @@ func CCLogin(c *gin.Context) {
 
 	if len(members) == 0 {
 		com.Error(c, "用户名不存在")
+		S.S.Logger.Infof("用户名不存在")
 		return
 	}
 	member := members[0]
 	if member.Password != pw {
 		com.Error(c, "密码错误")
+		S.S.Logger.Infof("密码错误")
 		return
 	}
 	retBody := loginBodyType{
 		Token: member.UUID,
 	}
+	S.S.Logger.Infof("登录成功，返回uuid: %s", member.UUID)
 	com.OkD(c, retBody)
 
 	log.Println("member", members)
+
+}
+
+func LatestPcdLink(c *gin.Context) {
+	// First get from the db the latest file
+	latestUploadRecord := model.HeroPcdUoload{}
+	res := S.S.Mysql.Order("id desc").First(&latestUploadRecord)
+	if res.RowsAffected == 0 {
+		S.S.Logger.Infof("没上传过PCD文件")
+		com.Error(c, "现在还没有上传过pcd文件")
+		return
+	}
+	fullLink := util.PadUrlLinkToPcdFile(latestUploadRecord.SavedFilename)
+	S.S.Logger.Infof("返回最新的PCD文件链接: %s", fullLink)
+	com.OkD(c, fullLink)
 
 }

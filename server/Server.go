@@ -12,6 +12,8 @@ import (
 
 func StartApi() {
 	s := gin.Default()
+	// set log writer
+
 	//s.Use(cors())
 	//s.Use(printRequest)
 
@@ -44,6 +46,7 @@ func StartApi() {
 		cc := s.Group("/cc")
 		cc.GET("/hero_control", view.HeroControl)
 		cc.POST("/login", view.CCLogin)
+		cc.GET("/latest_pcd_link", view.LatestPcdLink)
 	}
 
 	{

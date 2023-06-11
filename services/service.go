@@ -10,7 +10,6 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 	"io"
 	"log"
 	"os"
@@ -35,7 +34,8 @@ type service struct {
 	Context context.Context
 
 	// 一个logrus的logger
-	Logger *logrus.Logger
+	Logger         *logrus.Logger
+	MultipleWriter io.Writer
 }
 
 func InitServices() {
@@ -54,8 +54,8 @@ func InitServices() {
 			TaskPool: initTaskPool(),
 			Mysql:    initMysql(),
 			Context:  initEmptyContext(),
-			Logger:   initLogger(),
 		}
+		S.Logger, S.MultipleWriter = initLogger()
 	})
 }
 
@@ -94,7 +94,7 @@ func initTaskPool() *ants.Pool {
 func initMysql() *gorm.DB {
 	dns := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", S.Conf.Database.Username, S.Conf.Database.Password, S.Conf.Database.Url, S.Conf.Database.Port, S.Conf.Database.TableName)
 	db, err := gorm.Open(mysql.Open(dns), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info), // 日志配置
+		//Logger: logger.Default.LogMode(logger.Info), // 日志配置
 	})
 	if err != nil {
 		log.Fatalln("初始化数据库连接失败", err)
@@ -106,19 +106,25 @@ func initEmptyContext() context.Context {
 	return context.Background()
 }
 
-func initLogger() *logrus.Logger {
+func initLogger() (*logrus.Logger, io.Writer) {
 	// init a lumberjack logger
 	lumberjackLogger := &lumberjack.Logger{
 		Filename:   path.Join(S.Conf.Log.LogFileDirPref, S.Conf.Log.LogFileName), // 日志文件路径
-		MaxSize:    10,                                                           // 每个日志文件保存的最大尺寸 单位：M
+		MaxSize:    1,                                                            // 每个日志文件保存的最大尺寸 单位：M
 		MaxBackups: 1,                                                            // 日志文件最多保存多少个备份
 		MaxAge:     7,                                                            // 文件最多保存多少天
 		Compress:   false,                                                        // 是否压缩
+
 	}
 	// init a logrus logger
 	logrusLogger := logrus.New()
+	logrusLogger.SetFormatter(&logrus.JSONFormatter{
+		TimestampFormat: "2006-01-02 15:04:05",
+	})
+	logrusLogger.SetLevel(logrus.InfoLevel)
+	//logrusLogger.SetReportCaller(true)
 	multiWriter := io.MultiWriter(os.Stdout, lumberjackLogger)
 	logrusLogger.SetOutput(multiWriter)
 
-	return logrusLogger
+	return logrusLogger, multiWriter
 }

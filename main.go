@@ -4,6 +4,7 @@ import (
 	"ConfBackend/chat"
 	"ConfBackend/server"
 	S "ConfBackend/services"
+	"github.com/gin-gonic/gin"
 	"log"
 )
 
@@ -27,6 +28,8 @@ func main() {
 	// 设置gin的运行模式 调试/生产
 	//gin.SetMode(gin.ReleaseMode)
 	// web 服务器
+	gin.DefaultWriter = S.S.MultipleWriter
+	gin.SetMode(gin.ReleaseMode)
 	server.StartApi()
 
 }

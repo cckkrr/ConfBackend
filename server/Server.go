@@ -61,7 +61,7 @@ func StartApi() {
 		im.POST("/get_batch_nicknames", view.GetBatchNicknames)
 
 		// file system for /static/file
-		im.Static("/static/file", "./static/file")
+		s.Static("im/static/file", S.S.Conf.Chat.SaveStaticFileDirPrefix)
 	}
 
 	{

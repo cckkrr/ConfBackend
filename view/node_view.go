@@ -68,3 +68,7 @@ func setToRedis(c *gin.Context, nodeId, packetId string, info locInfoType) {
 	}
 
 }
+
+func SensorStats(c *gin.Context) {
+
+}

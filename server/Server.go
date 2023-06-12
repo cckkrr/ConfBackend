@@ -29,6 +29,7 @@ func StartApi() {
 		// node api group
 		node := s.Group("/node")
 		node.POST("/update_location", view.UpdateLocation)
+		node.POST("/sensor_stats", view.SensorStats)
 	}
 
 	{
@@ -58,7 +59,9 @@ func StartApi() {
 		im.GET("/all_online", view.AllOnline)
 		im.POST("/chat_history", view.ChatHistory)
 		im.POST("/get_batch_nicknames", view.GetBatchNicknames)
-		//todo
+
+		// file system for /static/file
+		im.Static("/static/file", "./static/file")
 	}
 
 	{

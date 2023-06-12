@@ -106,6 +106,9 @@ func initEmptyContext() context.Context {
 	return context.Background()
 }
 
+// initLogger 初始化日志工具
+// logrusLogger contains the io.Writer, and the io.Writer returned
+// is only for gin to write logs to file
 func initLogger() (*logrus.Logger, io.Writer) {
 	// init a lumberjack logger
 	lumberjackLogger := &lumberjack.Logger{

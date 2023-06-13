@@ -34,6 +34,7 @@ func StartApi() {
 		node.POST("/echo", func(context *gin.Context) {
 			// echo whatever is in the request body
 			content, _ := io.ReadAll(context.Request.Body)
+			S.S.Logger.Infof("echo to node: %s", string(content))
 			context.String(200, string(content))
 
 		})

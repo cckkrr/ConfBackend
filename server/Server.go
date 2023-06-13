@@ -7,6 +7,7 @@ import (
 	"ConfBackend/task"
 	"ConfBackend/view"
 	"github.com/gin-gonic/gin"
+	"io"
 	"log"
 )
 
@@ -30,6 +31,12 @@ func StartApi() {
 		node := s.Group("/node")
 		node.POST("/update_location", view.UpdateLocation)
 		node.POST("/sensor_stats", view.SensorStats)
+		node.POST("/echo", func(context *gin.Context) {
+			// echo whatever is in the request body
+			content, _ := io.ReadAll(context.Request.Body)
+			context.String(200, string(content))
+
+		})
 	}
 
 	{

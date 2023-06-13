@@ -59,6 +59,7 @@ func StartApi() {
 		im.GET("/all_online", view.AllOnline)
 		im.POST("/chat_history", view.ChatHistory)
 		im.POST("/get_batch_nicknames", view.GetBatchNicknames)
+		im.GET("/get_all_contacts", view.GetAllContacts)
 
 		// file system for /static/file
 		s.Static("im/static/file", S.S.Conf.Chat.SaveStaticFileDirPrefix)

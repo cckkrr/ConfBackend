@@ -1,12 +1,15 @@
 package view
 
 import (
+	com "ConfBackend/common"
+	"ConfBackend/model"
 	S "ConfBackend/services"
 	_ "ConfBackend/services"
 	"ConfBackend/util"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
+	"github.com/sirupsen/logrus"
 	"log"
 	"time"
 )
@@ -71,4 +74,16 @@ func setToRedis(c *gin.Context, nodeId, packetId string, info locInfoType) {
 
 func SensorStats(c *gin.Context) {
 
+}
+
+func GetAllContacts(c *gin.Context) {
+
+	incomeUuid := c.GetHeader("X-User-UUID")
+	S.S.Logger.WithFields(logrus.Fields{
+		"incomeUuid": incomeUuid,
+	}).Infof("GetAllContacts")
+	usrs := make([]model.Member, 0)
+	// S.S.Mysql find all usrs that are not deleted
+	S.S.Mysql.Select("uuid", "nickname").Where("deleted_at is null AND uuid != ?", incomeUuid).Order("id").Find(&usrs)
+	com.OkD(c, usrs)
 }

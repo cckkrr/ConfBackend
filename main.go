@@ -20,7 +20,7 @@ func main() {
 
 	// 启动聊天部分功能
 	log.Println("init chat services")
-	go chat.InitChatServices()
+	chat.InitChatServices()
 
 	// 协程，启动所有其他的定时/周期或其它线程任务
 	go server.StartTimed()

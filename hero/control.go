@@ -154,6 +154,7 @@ func HandleConnection(conn net.Conn) {
 					continue
 				}
 				_, err := conn.Write([]byte(command.ToCommandString()))
+				println("发送给车：", command.ToCommandString())
 				// 记录最新发送命令的时间戳
 				lastSendCommandTime = time.Now()
 

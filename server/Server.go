@@ -45,7 +45,7 @@ func StartApi() {
 		car := s.Group("/hero")
 		car.POST("/upload", view.HeroUpload)
 		car.GET("/ping", func(context *gin.Context) {
-			com.OkD(context, "Hello!!!")
+			com.OkD(context, "Hello!!!!!")
 		})
 	}
 

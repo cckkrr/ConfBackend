@@ -1,4 +1,4 @@
-package internal_model
+package dto
 
 import (
 	"github.com/golang-module/carbon/v2"

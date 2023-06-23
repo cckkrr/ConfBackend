@@ -3,13 +3,14 @@ package util
 import com "ConfBackend/common"
 
 func GenDistanceCacheKey(packetId, nodeId string) string {
-	return com.ProjectPref + ":" + com.DistanceCachePrefix + ":" + com.PacketPrefix + packetId + ":" + com.NodePrefix + nodeId
+	return com.ProjectPref + ":" + com.DistanceCachePrefix + ":" + com.PacketsPrefix + ":" + com.PacketPrefix + packetId + ":" + com.NodePrefix + nodeId
 }
 
 func GenDistanceQueryKey(packetId string) string {
-	return com.ProjectPref + ":" + com.DistanceCachePrefix + ":" + com.PacketPrefix + packetId + ":" + com.NodePrefix + "*"
+	return com.ProjectPref + ":" + com.DistanceCachePrefix + ":" + com.PacketsPrefix + ":" + com.PacketPrefix + packetId + ":" + com.NodePrefix + "*"
 }
 
+// GenPacketTimelogPrefix 生成节点位置的key,即 tr_:dc_:pkt_tm_
 func GenPacketTimelogPrefix() string {
 	return com.ProjectPref + ":" + com.DistanceCachePrefix + ":" + com.PacketTimelogPrefix
 }
@@ -32,4 +33,15 @@ func GenMsgListStaticKey() string {
 
 func GenMemberInfoNicknameKey(uuid string) string {
 	return com.ProjectPref + ":" + com.MemberStr + ":" + com.NicknameKey + ":" + uuid
+}
+
+///// 节点坐标部分
+
+// GenNodeCoordKey 返回tr_:dc_:node-coord_:nd_{nodeId}
+func GenNodeCoordKey(nodeId string) string {
+	return com.ProjectPref + ":" + com.DistanceCachePrefix + ":" + com.NodeCoordPref + ":" + com.NodePrefix + nodeId
+}
+
+func GenNodeCoordQueryPref() string {
+	return com.ProjectPref + ":" + com.DistanceCachePrefix + ":" + com.NodeCoordPref + ":" + com.NodePrefix + "*"
 }

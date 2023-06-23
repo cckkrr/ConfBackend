@@ -32,3 +32,7 @@ func StringToInt(s string) int {
 	i, _ := strconv.Atoi(s)
 	return i
 }
+
+func IntToString(i int) string {
+	return strconv.Itoa(i)
+}

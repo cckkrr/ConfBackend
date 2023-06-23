@@ -10,33 +10,39 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
-	"log"
 	"time"
 )
+
+type locationUpdateDTO struct {
+	NodeId   int         `json:"node"`
+	PacketId int         `json:"range"`
+	Distance locInfoType `json:"distance"`
+}
 
 type locInfoType map[string]float64
 
 // UpdateLocation 更新位置
 func UpdateLocation(c *gin.Context) {
-	// 获取header中X-Node-Id值
-	nodeId := c.GetHeader("X-Node-Id")
-
-	// 获取header中X-Packet-Id值
-	packetId := c.GetHeader("X-Packet-Id")
-
-	locInfo := locInfoType{}
-
-	// get request body content
-	err := json.NewDecoder(c.Request.Body).Decode(&locInfo)
+	// parse req body to locationUpdateDTO
+	b := locationUpdateDTO{}
+	err := json.NewDecoder(c.Request.Body).Decode(&b)
 	if err != nil {
-		log.Println(err)
+		return
 	}
-	setToRedis(c, nodeId, packetId, locInfo)
+
+	// 获取header中X-Node-Id值
+	nodeId := util.IntToString(b.NodeId)
+
+	// 获取header中X-Packet-Id值,转换成string
+	packetId := util.IntToString(b.PacketId)
+
+	locInfo := b.Distance
+	setToRedis(nodeId, packetId, locInfo)
 
 }
 
 // setToRedis 将距离信息存入redis
-func setToRedis(c *gin.Context, nodeId, packetId string, info locInfoType) {
+func setToRedis(nodeId, packetId string, info locInfoType) {
 	r := S.S.Redis
 
 	slice := make([]string, 2*len(info))
@@ -51,7 +57,7 @@ func setToRedis(c *gin.Context, nodeId, packetId string, info locInfoType) {
 	// hash key: 节点编号，hash value: 距离
 
 	p := r.Pipeline()
-	p.HSet(c, util.GenDistanceCacheKey(packetId, nodeId), slice)
+	p.HSet(S.S.Context, util.GenDistanceCacheKey(packetId, nodeId), slice)
 
 	//r.HSet(c, util.GenDistanceCacheKey(packetId, nodeId), slice)
 	// get current timestamp
@@ -64,8 +70,8 @@ func setToRedis(c *gin.Context, nodeId, packetId string, info locInfoType) {
 	// 在dc_下设置一个有序集合，记录首个该编号上传的时间。key编号：dc_:pkt_tm_
 	// zset value: 包编号，score: 时间戳
 	//r.ZAddNX(c, util.GenPacketTimelogPrefix(), b)
-	p.ZAddNX(c, util.GenPacketTimelogPrefix(), b)
-	_, err := p.Exec(c)
+	p.ZAddNX(S.S.Context, util.GenPacketTimelogPrefix(), b)
+	_, err := p.Exec(S.S.Context)
 	if err != nil {
 		return
 	}

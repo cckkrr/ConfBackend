@@ -38,3 +38,23 @@ func Difference(sliceA, sliceB []string) []string {
 
 	return difference
 }
+
+// Union returns the union of two string slices
+func Union(slice1, slice2 []string) []string {
+	set := make(map[string]bool)
+	union := []string{}
+
+	for _, str := range slice1 {
+		set[str] = true
+	}
+
+	for _, str := range slice2 {
+		set[str] = true
+	}
+
+	for str := range set {
+		union = append(union, str)
+	}
+
+	return union
+}

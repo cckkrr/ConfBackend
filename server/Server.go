@@ -39,7 +39,7 @@ func StartApi() {
 		// node api group
 		node := s.Group("/node")
 		node.POST("/update_location", view.UpdateLocation)
-		node.POST("/sensor_stats", view.SensorStats)
+		node.POST("/sensors", view.SensorStats)
 		node.POST("/echo", func(context *gin.Context) {
 			// echo whatever is in the request body
 			content, _ := io.ReadAll(context.Request.Body)

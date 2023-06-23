@@ -5,6 +5,7 @@ var (
 	ProjectPref = "tr_"
 
 	DistanceCachePrefix = "dc_"
+	PacketsPrefix       = "pkts_"
 	PacketPrefix        = "pkt_"
 	NodePrefix          = "nd_"
 
@@ -40,4 +41,8 @@ var (
 var (
 	// NicknameKey hash key
 	NicknameKey = "nickname_"
+)
+
+var (
+	NodeCoordPref = "node-coord_"
 )

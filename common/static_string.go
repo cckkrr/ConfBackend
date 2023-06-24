@@ -44,5 +44,7 @@ var (
 )
 
 var (
-	NodeCoordPref = "node-coord_"
+	// CoordPref 节点坐标部分
+	CoordPref      = "coord_"
+	NodeCoordsPref = "node-coords_"
 )

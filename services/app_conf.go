@@ -37,4 +37,7 @@ type AppConfig struct {
 	Pcd struct {
 		ServerPCDFileUrlPrefix string
 	}
+	Node struct {
+		NodeInfo []string
+	}
 }

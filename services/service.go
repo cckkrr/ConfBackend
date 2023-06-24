@@ -2,7 +2,6 @@ package S
 
 import (
 	"fmt"
-	"github.com/panjf2000/ants/v2"
 	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
@@ -23,11 +22,13 @@ var S service
 var oncerFile sync.Once
 var oncerAll sync.Once
 
+// TOtherConf 一些读完conf文件后的配置等结构体声明
+
 // service 声明服务
 type service struct {
-	Conf     AppConfig
-	Redis    redis.Client
-	TaskPool *ants.Pool
+	Conf AppConfig
+
+	Redis redis.Client
 	//  a gorm db
 	Mysql *gorm.DB
 	// 一个空白context
@@ -49,13 +50,13 @@ func InitServices() {
 	oncerAll.Do(func() {
 		S = service{
 			// 在此初始化所有服务
-			Conf:     S.Conf,
-			Redis:    initRedis(),
-			TaskPool: initTaskPool(),
-			Mysql:    initMysql(),
-			Context:  initEmptyContext(),
+			Conf:    S.Conf,
+			Redis:   initRedis(),
+			Mysql:   initMysql(),
+			Context: initEmptyContext(),
 		}
 		S.Logger, S.MultipleWriter = initLogger()
+
 	})
 }
 
@@ -64,6 +65,7 @@ func InitConf() AppConfig {
 	if err := gcfg.ReadFileInto(&tempConf, "./etc/app.conf"); err != nil {
 		log.Fatalln("读取配置文件错误，", err)
 	}
+
 	return tempConf
 }
 
@@ -81,14 +83,6 @@ func initRedis() redis.Client {
 		log.Println("redis连接成功", pong)
 	}
 	return tempRedis
-}
-
-func initTaskPool() *ants.Pool {
-	pool, err := ants.NewPool(32, ants.WithNonblocking(false))
-	if err != nil {
-		log.Fatalln("初始化任务池失败", err)
-	}
-	return pool
 }
 
 func initMysql() *gorm.DB {

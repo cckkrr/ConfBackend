@@ -3,7 +3,7 @@ package dto
 type UpdateLocationReq struct {
 }
 
-type NodeDistanceDTO struct {
+type PTermDistanceDTO struct {
 	NodeNo   string
 	Distance float64
 }

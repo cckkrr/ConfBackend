@@ -6,7 +6,6 @@ import (
 	S "ConfBackend/services"
 	"github.com/gin-gonic/gin"
 	"log"
-	"os"
 )
 
 func init() {
@@ -31,7 +30,6 @@ func main() {
 	// web 服务器
 	gin.DefaultWriter = S.S.MultipleWriter
 	gin.SetMode(gin.ReleaseMode)
-	println(os.Getenv("test"))
 	server.StartApi()
 
 }

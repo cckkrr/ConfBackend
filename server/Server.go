@@ -89,6 +89,7 @@ func StartApi() {
 			id := c.Query("id")
 			task.HaveValidUser(id)
 		})
+		test.POST("/add_node_coord", view.TestAddNode)
 
 	}
 	// set release mode

@@ -4,6 +4,7 @@ import (
 	com "ConfBackend/common"
 	"ConfBackend/model"
 	S "ConfBackend/services"
+	"ConfBackend/task"
 	"ConfBackend/util"
 	"github.com/gin-gonic/gin"
 )
@@ -35,4 +36,21 @@ func TestDb(c *gin.Context) {
 		return
 	}
 	com.OkD(c, res)
+}
+
+func TestAddNode(c *gin.Context) {
+	// color from form
+	color := c.PostForm("color")
+	x := c.PostForm("x")
+	y := c.PostForm("y")
+	z := c.PostForm("z")
+	// if any is "", return 400
+	if color == "" || x == "" || y == "" || z == "" {
+		com.Error(c, "must provide color, x, y, z")
+	}
+
+	xd := util.StringToFloat64(x)
+	yd := util.StringToFloat64(y)
+	zd := util.StringToFloat64(z)
+	task.SetNodeCoord(color, xd, yd, zd)
 }

@@ -37,11 +37,8 @@ func GenMemberInfoNicknameKey(uuid string) string {
 
 ///// 节点坐标部分
 
-// GenNodeCoordKey 返回tr_:dc_:node-coord_:nd_{nodeId}
-func GenNodeCoordKey(nodeId string) string {
-	return com.ProjectPref + ":" + com.DistanceCachePrefix + ":" + com.NodeCoordPref + ":" + com.NodePrefix + nodeId
-}
-
-func GenNodeCoordQueryPref() string {
-	return com.ProjectPref + ":" + com.DistanceCachePrefix + ":" + com.NodeCoordPref + ":" + com.NodePrefix + "*"
+// GenNodeCoordKey 返回tr_:dc_:coord_:node-coord_
+// 是一个hash的key，用来存放所有已知节点的坐标
+func GenNodeCoordKey() string {
+	return com.ProjectPref + ":" + com.DistanceCachePrefix + ":" + com.CoordPref + ":" + com.NodeCoordsPref
 }

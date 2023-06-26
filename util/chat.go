@@ -20,5 +20,12 @@ func PadSingleChatMsgFileUrl(msg *model.ImMessage) {
 }
 
 func ConcatFullFileUrl(fileUri string) string {
-	return S.S.Conf.Chat.ServerFileUrlPrefix + fileUri
+	pref := S.S.Conf.Chat.ServerFileUrlPrefix
+	// if pref ends with /
+	if pref[len(pref)-1] == '/' {
+		return pref + fileUri
+	} else {
+		return pref + "/" + fileUri
+	}
+
 }

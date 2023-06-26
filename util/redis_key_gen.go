@@ -42,3 +42,17 @@ func GenMemberInfoNicknameKey(uuid string) string {
 func GenNodeCoordKey() string {
 	return com.ProjectPref + ":" + com.DistanceCachePrefix + ":" + com.CoordPref + ":" + com.NodeCoordsPref
 }
+
+// GenCalcedPTermCoordKey 返回tr_:dc_:pterm-calced-coord_
+// 是一个hash，key是termid，value是一个json，是PTermCalcedCoordDTO结构体 json
+func GenCalcedPTermCoordKey() string {
+	return com.ProjectPref + ":" + com.DistanceCachePrefix + ":" + com.PtermCalcedCoordPrefix
+}
+
+///// node stats
+
+// GenNodeStatsKey 返回tr_:sensor_:node-sensor-stats_
+// 是一个hash，key是nodeid，value是一个json，是SensorStatsDTO结构体 json
+func GenNodeStatsKey() string {
+	return com.ProjectPref + ":" + com.SensorPrefix + ":" + com.NodeSensorStatsPrefix
+}

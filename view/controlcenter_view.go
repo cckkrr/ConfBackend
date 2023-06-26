@@ -147,7 +147,7 @@ func CCLogin(c *gin.Context) {
 func LatestPcdLink(c *gin.Context) {
 	// First get from the db the latest file
 	latestUploadRecord := model.HeroPcdUoload{}
-	res := S.S.Mysql.Order("id desc").First(&latestUploadRecord)
+	res := S.S.Mysql.Order("id desc").Where("pcd_file_type = ?", "3d").First(&latestUploadRecord)
 	if res.RowsAffected == 0 {
 		S.S.Logger.Infof("没上传过PCD文件")
 		com.Error(c, "现在还没有上传过pcd文件")
@@ -157,4 +157,18 @@ func LatestPcdLink(c *gin.Context) {
 	S.S.Logger.Infof("返回最新的PCD文件链接: %s", fullLink)
 	com.OkD(c, fullLink)
 
+}
+
+func LatestPcdLink2D(c *gin.Context) {
+	// First get from the db the latest file
+	latestUploadRecord := model.HeroPcdUoload{}
+	res := S.S.Mysql.Order("id desc").Where("pcd_file_type = ?", "2d").First(&latestUploadRecord)
+	if res.RowsAffected == 0 {
+		S.S.Logger.Infof("没上传过PCD文件")
+		com.Error(c, "现在还没有上传过pcd文件")
+		return
+	}
+	fullLink := util.PadUrlLinkToPcdFile(latestUploadRecord.SavedFilename)
+	S.S.Logger.Infof("返回最新的PCD文件链接: %s", fullLink)
+	com.OkD(c, fullLink)
 }

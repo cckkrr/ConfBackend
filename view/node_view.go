@@ -2,9 +2,11 @@ package view
 
 import (
 	com "ConfBackend/common"
+	"ConfBackend/dto"
 	"ConfBackend/model"
 	S "ConfBackend/services"
 	_ "ConfBackend/services"
+	"ConfBackend/task"
 	"ConfBackend/util"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
@@ -79,6 +81,13 @@ func setToRedis(nodeId, packetId string, info locInfoType) {
 }
 
 func SensorStats(c *gin.Context) {
+	b := dto.SensorUpdateReqModel{}
+	err := json.NewDecoder(c.Request.Body).Decode(&b)
+	if err != nil {
+		return
+	}
+
+	task.SetSensorStatsToRedis(util.IntToString(b.NodeId), b.SensorInfo.Light1, b.SensorInfo.Light2, b.SensorInfo.Voice1)
 
 }
 

@@ -53,6 +53,7 @@ func StartApi() {
 		// The car's api group
 		car := s.Group("/hero")
 		car.POST("/upload", view.HeroUpload)
+		car.POST("upload_2d", view.HeroUpload2D)
 		car.GET("/ping", func(context *gin.Context) {
 			com.OkD(context, "Hello!!!!!-lab-server")
 		})
@@ -65,6 +66,7 @@ func StartApi() {
 		cc.GET("/hero_control", view.HeroControl)
 		cc.POST("/login", view.CCLogin)
 		cc.GET("/latest_pcd_link", view.LatestPcdLink)
+		cc.GET("/latest_pcd_link_2d", view.LatestPcdLink2D)
 	}
 
 	{
@@ -81,6 +83,9 @@ func StartApi() {
 		// file system for /static/file
 		s.Static("im/static/file", S.S.Conf.Chat.SaveStaticFileDirPrefix)
 	}
+
+	//join dir of current and static
+	s.Static("pcd/static/", S.S.Conf.Pcd.SaveStaticFileDirPrefix)
 
 	{
 		test := s.Group("/test")

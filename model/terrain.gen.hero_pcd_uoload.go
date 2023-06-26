@@ -90,6 +90,11 @@ func (obj *_HeroPcdUoloadMgr) WithSaveDuration(saveDuration int) Option {
 	return optionFunc(func(o *options) { o.query["save_duration"] = saveDuration })
 }
 
+// WithPcdFileType pcd_file_type获取 2d or 3d
+func (obj *_HeroPcdUoloadMgr) WithPcdFileType(pcdFileType string) Option {
+	return optionFunc(func(o *options) { o.query["pcd_file_type"] = pcdFileType })
+}
+
 // GetByOption 功能选项模式获取
 func (obj *_HeroPcdUoloadMgr) GetByOption(opts ...Option) (result HeroPcdUoload, err error) {
 	options := options{
@@ -237,6 +242,20 @@ func (obj *_HeroPcdUoloadMgr) GetFromSaveDuration(saveDuration int) (results []*
 // GetBatchFromSaveDuration 批量查找
 func (obj *_HeroPcdUoloadMgr) GetBatchFromSaveDuration(saveDurations []int) (results []*HeroPcdUoload, err error) {
 	err = obj.DB.WithContext(obj.ctx).Model(HeroPcdUoload{}).Where("`save_duration` IN (?)", saveDurations).Find(&results).Error
+
+	return
+}
+
+// GetFromPcdFileType 通过pcd_file_type获取内容 2d or 3d
+func (obj *_HeroPcdUoloadMgr) GetFromPcdFileType(pcdFileType string) (results []*HeroPcdUoload, err error) {
+	err = obj.DB.WithContext(obj.ctx).Model(HeroPcdUoload{}).Where("`pcd_file_type` = ?", pcdFileType).Find(&results).Error
+
+	return
+}
+
+// GetBatchFromPcdFileType 批量查找 2d or 3d
+func (obj *_HeroPcdUoloadMgr) GetBatchFromPcdFileType(pcdFileTypes []string) (results []*HeroPcdUoload, err error) {
+	err = obj.DB.WithContext(obj.ctx).Model(HeroPcdUoload{}).Where("`pcd_file_type` IN (?)", pcdFileTypes).Find(&results).Error
 
 	return
 }

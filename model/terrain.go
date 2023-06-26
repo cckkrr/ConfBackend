@@ -13,6 +13,7 @@ type HeroPcdUoload struct {
 	SavedFilename            string    `gorm:"column:saved_filename" json:"savedFilename"`
 	FileSize                 int64     `gorm:"column:file_size" json:"fileSize"`
 	SaveDuration             int       `gorm:"column:save_duration" json:"saveDuration"`
+	PcdFileType              string    `gorm:"column:pcd_file_type" json:"pcdFileType"` // 2d or 3d
 }
 
 // TableName get sql table name.获取数据库表名
@@ -29,6 +30,7 @@ var HeroPcdUoloadColumns = struct {
 	SavedFilename            string
 	FileSize                 string
 	SaveDuration             string
+	PcdFileType              string
 }{
 	ID:                       "id",
 	FileUUID:                 "file_uuid",
@@ -37,6 +39,7 @@ var HeroPcdUoloadColumns = struct {
 	SavedFilename:            "saved_filename",
 	FileSize:                 "file_size",
 	SaveDuration:             "save_duration",
+	PcdFileType:              "pcd_file_type",
 }
 
 // ImCacheInbox [...]

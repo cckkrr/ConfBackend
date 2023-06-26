@@ -48,3 +48,13 @@ var (
 	CoordPref      = "coord_"
 	NodeCoordsPref = "node-coords_"
 )
+
+var (
+	PtermCalcedCoordPrefix = "pterm-calced-coord_"
+)
+
+// /// node sensor stats
+var (
+	SensorPrefix          = "sensor_"
+	NodeSensorStatsPrefix = "node-sensor-stats_"
+)
